@@ -9,14 +9,14 @@ const MESSAGE_ERROR_DEFAULT = { message: 'На сервере произошла
 
 const sendError = (res, err) => {
   if (err.name === 'ValidationError' || err.name === 'CastError') {
-    res.status(ERROR_BAD_REQUEST).send({ message: MESSAGE_ERROR_BAD_REQUEST });
+    res.status(ERROR_BAD_REQUEST).send(MESSAGE_ERROR_BAD_REQUEST);
     return;
   }
   if (err.name === 'Error') {
-    res.status(ERROR_NOT_FOUND).send({ message: MESSAGE_ERROR_NOT_FOUND });
+    res.status(ERROR_NOT_FOUND).send(MESSAGE_ERROR_NOT_FOUND);
     return;
   }
-  res.status(ERROR_DEFAULT).send({ message: MESSAGE_ERROR_DEFAULT });
+  res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
 };
 
 module.exports = {

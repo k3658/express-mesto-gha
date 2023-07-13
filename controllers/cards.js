@@ -8,7 +8,7 @@ const {
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() => res.status(ERROR_DEFAULT).send({ message: MESSAGE_ERROR_DEFAULT }));
+    .catch(() => res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT));
 };
 
 const createCard = (req, res) => {

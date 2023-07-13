@@ -16,7 +16,7 @@ const createUser = (req, res) => {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(ERROR_DEFAULT).send({ message: MESSAGE_ERROR_DEFAULT }));
+    .catch(() => res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT));
 };
 
 const getUserById = (req, res) => {
