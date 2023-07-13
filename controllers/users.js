@@ -23,7 +23,13 @@ const getUserById = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new Error();
+      } else {
+        res.send(user);
+      }
+    })
     .catch((err) => sendError(res, err));
 };
 
@@ -35,7 +41,13 @@ const updateUserProfile = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new Error();
+      } else {
+        res.send(user);
+      }
+    })
     .catch((err) => sendError(res, err));
 };
 
@@ -47,7 +59,13 @@ const updateUserAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new Error();
+      } else {
+        res.send(user);
+      }
+    })
     .catch((err) => sendError(res, err));
 };
 

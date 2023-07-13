@@ -20,6 +20,8 @@ const sendError = (res, err) => {
 };
 
 module.exports = {
+  ERROR_NOT_FOUND,
+  MESSAGE_ERROR_NOT_FOUND,
   ERROR_DEFAULT,
   MESSAGE_ERROR_DEFAULT,
   sendError,
