@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const ERROR_BAD_REQUEST = 400;
 const MESSAGE_ERROR_BAD_REQUEST = { message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля.' };
 
@@ -8,7 +10,8 @@ const ERROR_DEFAULT = 500;
 const MESSAGE_ERROR_DEFAULT = { message: 'На сервере произошла ошибка.' };
 
 const sendError = (res, err) => {
-  if (err.name === 'ValidationError' || err.name === 'CastError') {
+  if (err instanceof mongoose.Error.ValidationError
+    || err instanceof mongoose.Error.CastError) {
     res.status(ERROR_BAD_REQUEST).send(MESSAGE_ERROR_BAD_REQUEST);
     return;
   }

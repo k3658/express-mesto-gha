@@ -9,7 +9,7 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => sendError(res, err));
 };
 
@@ -33,12 +33,10 @@ const getUserById = (req, res) => {
     .catch((err) => sendError(res, err));
 };
 
-const updateUserProfile = (req, res) => {
-  const { name, about } = req.body;
-
+const updateUserInfo = (req, res, info) => {
   User.findByIdAndUpdate(
     req.user._id,
-    { name, about },
+    info,
     { new: true, runValidators: true },
   )
     .then((user) => {
@@ -51,22 +49,16 @@ const updateUserProfile = (req, res) => {
     .catch((err) => sendError(res, err));
 };
 
+const updateUserProfile = (req, res) => {
+  const { name, about } = req.body;
+
+  updateUserInfo(req, res, { name, about });
+};
+
 const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    { new: true, runValidators: true },
-  )
-    .then((user) => {
-      if (!user) {
-        throw new Error();
-      } else {
-        res.send(user);
-      }
-    })
-    .catch((err) => sendError(res, err));
+  updateUserInfo(req, res, { avatar });
 };
 
 module.exports = {

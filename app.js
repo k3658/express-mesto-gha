@@ -1,9 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
+const rootRouter = require('./routes/index');
 
 const { ERROR_NOT_FOUND, MESSAGE_ERROR_NOT_FOUND } = require('./errors/errors');
 
@@ -11,7 +9,7 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use((req, res, next) => {
   req.user = {
@@ -21,8 +19,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/users', usersRouter);
-app.use('/cards', cardsRouter);
+app.use('/', rootRouter);
+
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send(MESSAGE_ERROR_NOT_FOUND);
 });
