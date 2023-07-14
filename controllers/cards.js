@@ -26,7 +26,7 @@ const deleteCard = (req, res) => {
       if (!card) {
         throw new Error();
       } else {
-        res.send({ message: 'Карточка удалена' });
+        res.send({ message: 'Card is deleted' });
       }
     })
     .catch((err) => sendError(res, err));
@@ -42,7 +42,7 @@ const likeCard = (req, res) => {
       if (!card) {
         throw new Error();
       } else {
-        res.send({ message: 'Карточка лайкнута' });
+        res.send({ message: 'Card is liked' });
       }
     })
     .catch((err) => sendError(res, err));
@@ -58,7 +58,7 @@ const dislikeCard = (req, res) => {
       if (!card) {
         throw new Error();
       } else {
-        res.send({ message: 'Лайк убрали' });
+        res.send({ message: 'Card is disliked' });
       }
     })
     .catch((err) => sendError(res, err));
