@@ -32,36 +32,38 @@ const deleteCard = (req, res) => {
     .catch((err) => sendError(res, err));
 };
 
-const likeCard = (req, res) => {
+const updateCardData = (req, res, data, msg) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    data,
     { new: true },
   )
     .then((card) => {
       if (!card) {
         throw new Error();
       } else {
-        res.send({ message: 'Card is liked' });
+        res.send({ message: msg });
       }
     })
     .catch((err) => sendError(res, err));
 };
 
+const likeCard = (req, res) => {
+  updateCardData(
+    req,
+    res,
+    { $addToSet: { likes: req.user._id } },
+    'Card is liked',
+  );
+};
+
 const dislikeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
+  updateCardData(
+    req,
+    res,
     { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new Error();
-      } else {
-        res.send({ message: 'Card is disliked' });
-      }
-    })
-    .catch((err) => sendError(res, err));
+    'Card is disliked',
+  );
 };
 
 module.exports = {
