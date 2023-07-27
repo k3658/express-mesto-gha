@@ -1,28 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const { errors } = require('celebrate');
 
 const rootRouter = require('./routes/index');
 
-const { ERROR_NOT_FOUND, MESSAGE_ERROR_NOT_FOUND } = require('./errors/errors');
+const errProcessing = require('./middlewares/errProcessing');
+const { NotFoundError } = require('./errors/NotFoundError');
+const { errorMessages } = require('./errors/errors');
 
 const app = express();
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
+mongoose.connect(DB_URL);
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
-
+app.use(helmet());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64af1b69423cf63cde581696',
-  };
-
-  next();
-});
-
 app.use('/', rootRouter);
-
 app.use((req, res) => {
-  res.status(ERROR_NOT_FOUND).send(MESSAGE_ERROR_NOT_FOUND);
+  res.status(NotFoundError).send(errorMessages.MESSAGE_ERROR_NOT_FOUND);
 });
 
-app.listen(3000);
+app.use(errors());
+app.use(errProcessing);
+
+app.listen(PORT);

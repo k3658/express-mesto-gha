@@ -1,38 +1,47 @@
 const Card = require('../models/card');
-const {
-  ERROR_DEFAULT,
-  MESSAGE_ERROR_DEFAULT,
-  sendError,
-} = require('../errors/errors');
 
-const getCards = (req, res) => {
-  Card.find({})
-    .then((cards) => res.send(cards))
-    .catch(() => res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT));
-};
+const { DefaultError } = require('../errors/DefaultError');
+const { NotFoundError } = require('../errors/NotFoundError');
+const { ForbiddenError } = require('../errors/ForbiddenError');
+const { errorMessages } = require('../errors/errors');
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.status(201).send(card))
-    .catch((err) => sendError(res, err));
+    .catch(next);
 };
 
-const deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId)
+const getCards = (req, res) => {
+  Card.find({})
+    .then((cards) => res.send(cards))
+    .catch(() => res.status(DefaultError).send(errorMessages.MESSAGE_ERROR_DEFAULT));
+};
+
+const deleteCard = (req, res, next) => {
+  const { cardId } = req.params;
+  const owner = req.user._id;
+
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new Error();
-      } else {
-        res.send({ message: 'Card is deleted' });
+        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
       }
+      if (card.owner.toString !== owner) {
+        next(new ForbiddenError(errorMessages.MESSAGE_ERROR_FORBIDDEN));
+      }
+      return Card.findByIdAndDelete(cardId)
+        .then(() => {
+          res.send({ message: 'Card is deleted' });
+        })
+        .catch(next);
     })
-    .catch((err) => sendError(res, err));
+    .catch(next);
 };
 
-const updateCardData = (req, res, data, msg) => {
+const updateCardData = (req, res, next, data, msg) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     data,
@@ -40,12 +49,12 @@ const updateCardData = (req, res, data, msg) => {
   )
     .then((card) => {
       if (!card) {
-        throw new Error();
+        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
       } else {
         res.send({ message: msg });
       }
     })
-    .catch((err) => sendError(res, err));
+    .catch(next);
 };
 
 const likeCard = (req, res) => {
@@ -67,8 +76,8 @@ const dislikeCard = (req, res) => {
 };
 
 module.exports = {
-  getCards,
   createCard,
+  getCards,
   deleteCard,
   likeCard,
   dislikeCard,
