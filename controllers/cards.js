@@ -37,7 +37,7 @@ const deleteCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
       }
-      if (card.owner.toString !== owner) {
+      if (String(card.owner) !== owner) {
         throw new ForbiddenError(errorMessages.MESSAGE_ERROR_FORBIDDEN);
       }
       return Card.deleteOne(card)
