@@ -1,7 +1,10 @@
+const mongoose = require('mongoose');
+
 const Card = require('../models/card');
 
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
+const BadRequestError = require('../errors/BadRequestError');
 const { errorMessages } = require('../errors/errors');
 
 const createCard = (req, res, next) => {
@@ -10,7 +13,13 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.status(201).send(card))
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        next(new BadRequestError(errorMessages.MESSAGE_ERROR_BAD_REQUEST));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const getCards = (req, res, next) => {
@@ -32,12 +41,16 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError(errorMessages.MESSAGE_ERROR_FORBIDDEN);
       }
       return Card.deleteOne(card)
-        .then(() => {
-          res.send({ message: 'Карточка удалена.' });
-        })
+        .then(() => res.send({ message: 'Карточка удалена.' }))
         .catch(next);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequestError(errorMessages.MESSAGE_ERROR_BAD_REQUEST));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const updateCardData = (req, res, next, data, msg) => {
@@ -48,12 +61,18 @@ const updateCardData = (req, res, next, data, msg) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
+        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
       } else {
         res.send({ message: msg });
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequestError(errorMessages.MESSAGE_ERROR_BAD_REQUEST));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const likeCard = (req, res, next) => {

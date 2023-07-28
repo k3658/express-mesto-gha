@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -5,6 +6,7 @@ const User = require('../models/user');
 
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
+const BadRequestError = require('../errors/BadRequestError');
 const { errorMessages } = require('../errors/errors');
 
 // AUTHORIZATION
@@ -37,6 +39,8 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError(errorMessages.MESSAGE_ERROR_CONFLICT));
+      } else if (err instanceof mongoose.Error.ValidationError) {
+        next(new BadRequestError(errorMessages.MESSAGE_ERROR_BAD_REQUEST));
       } else {
         next(err);
       }
@@ -65,12 +69,18 @@ const getUser = (req, res, next, info) => {
   User.findById(info)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
+        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
       } else {
         res.send(user);
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequestError(errorMessages.MESSAGE_ERROR_BAD_REQUEST));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const getUserById = (req, res, next) => {

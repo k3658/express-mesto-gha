@@ -22,7 +22,7 @@ cardsRouter.post('/', celebrate({
   }),
 }), createCard);
 
-// DELETE CARD
+// DELETE
 cardsRouter.delete('/:cardId', celebrate({
   body: Joi.object().keys({
     cardId: Joi.string().hex().length(24),
