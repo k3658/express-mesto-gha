@@ -5,6 +5,7 @@ const errProcessing = (err, req, res, next) => {
 
   if (err.code === 11000) {
     res.status(statusCodes.ERROR_CONFLICT).send({ message: errorMessages.MESSAGE_ERROR_CONFLICT });
+    return;
   }
 
   res.status(statusCode).send({ message });
