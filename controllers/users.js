@@ -36,7 +36,7 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictError(errorMessages.MESSAGE_ERROR_CONFLICT));
+        throw new ConflictError(errorMessages.MESSAGE_ERROR_CONFLICT);
       } else {
         next(err);
       }
@@ -65,7 +65,7 @@ const getUser = (req, res, next, info) => {
   User.findById(info)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
+        throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
       } else {
         res.send(user);
       }
