@@ -48,7 +48,7 @@ const updateCardData = (req, res, next, data, msg) => {
   )
     .then((card) => {
       if (!card) {
-        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
+        throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
       } else {
         res.send({ message: msg });
       }
@@ -56,20 +56,24 @@ const updateCardData = (req, res, next, data, msg) => {
     .catch(next);
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
+  const data = { $addToSet: { likes: req.user._id } };
   updateCardData(
     req,
     res,
-    { $addToSet: { likes: req.user._id } },
+    next,
+    data,
     'Card is liked',
   );
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
+  const data = { $pull: { likes: req.user._id } };
   updateCardData(
     req,
     res,
-    { $pull: { likes: req.user._id } },
+    next,
+    data,
     'Card is disliked',
   );
 };
