@@ -35,8 +35,8 @@ rootRouter.post('/signin', celebrate({
 rootRouter.use('/users', auth, usersRouter);
 rootRouter.use('/cards', auth, cardsRouter);
 
-rootRouter.use((req, res) => {
-  throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
+rootRouter.use((req, res, next) => {
+  next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
 });
 
 module.exports = rootRouter;
