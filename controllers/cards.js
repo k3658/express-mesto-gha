@@ -31,9 +31,9 @@ const deleteCard = (req, res, next) => {
       if (card.owner.toString !== owner) {
         throw new ForbiddenError(errorMessages.MESSAGE_ERROR_FORBIDDEN);
       }
-      Card.deleteOne(card)
+      return Card.deleteOne(card)
         .then(() => {
-          res.send({ message: 'Card is deleted' });
+          res.send({ message: 'Карточка удалена.' });
         })
         .catch(next);
     })
@@ -58,23 +58,25 @@ const updateCardData = (req, res, next, data, msg) => {
 
 const likeCard = (req, res, next) => {
   const data = { $addToSet: { likes: req.user._id } };
+
   updateCardData(
     req,
     res,
     next,
     data,
-    'Card is liked',
+    'Карточка лайкнута.',
   );
 };
 
 const dislikeCard = (req, res, next) => {
   const data = { $pull: { likes: req.user._id } };
+
   updateCardData(
     req,
     res,
     next,
     data,
-    'Card is disliked',
+    'Лайк у карточки убран.',
   );
 };
 
