@@ -1,9 +1,9 @@
-const { ERROR_DEFAULT } = require('./errors');
+const { statusCodes } = require('./errors');
 
 class DefaultError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = ERROR_DEFAULT;
+    this.statusCode = statusCodes.ERROR_DEFAULT;
   }
 }
 
