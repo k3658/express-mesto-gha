@@ -8,7 +8,7 @@ const cardsRouter = require('./cards');
 const auth = require('../middlewares/auth');
 const { linkRegex } = require('../utils/regex');
 
-const { NotFoundError } = require('../errors/NotFoundError');
+const NotFoundError = require('../errors/NotFoundError');
 const { errorMessages } = require('../errors/errors');
 
 rootRouter.get('/', (req, res) => {

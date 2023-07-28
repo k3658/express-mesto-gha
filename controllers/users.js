@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-const { NotFoundError } = require('../errors/NotFoundError');
-const { ConflictError } = require('../errors/ConflictError');
+const NotFoundError = require('../errors/NotFoundError');
+const ConflictError = require('../errors/ConflictError');
 const { errorMessages } = require('../errors/errors');
 
 // AUTHORIZATION
