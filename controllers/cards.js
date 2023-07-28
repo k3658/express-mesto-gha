@@ -26,12 +26,10 @@ const deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
-        return;
+        throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
       }
       if (card.owner.toString !== owner) {
-        next(new ForbiddenError(errorMessages.MESSAGE_ERROR_FORBIDDEN));
-        return;
+        throw new ForbiddenError(errorMessages.MESSAGE_ERROR_FORBIDDEN);
       }
       Card.deleteOne(card)
         .then(() => {

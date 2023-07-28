@@ -90,7 +90,7 @@ const updateUserInfo = (req, res, info, next) => {
   )
     .then((user) => {
       if (!user) {
-        next(new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND));
+        throw new NotFoundError(errorMessages.MESSAGE_ERROR_NOT_FOUND);
       } else {
         res.send(user);
       }
