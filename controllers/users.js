@@ -3,11 +3,11 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-const { DefaultError } = require('../errors/DefaultError');
 const { NotFoundError } = require('../errors/NotFoundError');
 const { ConflictError } = require('../errors/ConflictError');
 const { errorMessages } = require('../errors/errors');
 
+// AUTHORIZATION
 const createUser = (req, res, next) => {
   const {
     email,
@@ -43,10 +43,22 @@ const createUser = (req, res, next) => {
     });
 };
 
-const getUsers = (req, res) => {
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.status(200).send({ token });
+    })
+    .catch(next);
+};
+
+// GET
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(DefaultError).send(errorMessages.MESSAGE_ERROR_DEFAULT));
+    .catch(next);
 };
 
 const getUser = (req, res, next, info) => {
@@ -69,6 +81,7 @@ const getCurrentUser = (req, res, next) => {
   getUser(req, res, next, req.user._id);
 };
 
+// UPDATE
 const updateUserInfo = (req, res, info, next) => {
   User.findByIdAndUpdate(
     req.user._id,
@@ -97,25 +110,9 @@ const updateUserAvatar = (req, res) => {
   updateUserInfo(req, res, { avatar });
 };
 
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: true,
-      });
-      res.status(200).send({ message: 'Logged in' });
-    })
-    .catch(next);
-};
-
 module.exports = {
-  login,
   createUser,
+  login,
   getUsers,
   getUserById,
   getCurrentUser,

@@ -1,6 +1,5 @@
 const Card = require('../models/card');
 
-const { DefaultError } = require('../errors/DefaultError');
 const { NotFoundError } = require('../errors/NotFoundError');
 const { ForbiddenError } = require('../errors/ForbiddenError');
 const { errorMessages } = require('../errors/errors');
@@ -14,10 +13,10 @@ const createCard = (req, res, next) => {
     .catch(next);
 };
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() => res.status(DefaultError).send(errorMessages.MESSAGE_ERROR_DEFAULT));
+    .catch(next);
 };
 
 const deleteCard = (req, res, next) => {
