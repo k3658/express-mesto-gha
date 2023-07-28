@@ -36,7 +36,7 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        throw new ConflictError(errorMessages.MESSAGE_ERROR_CONFLICT);
+        next(new ConflictError(errorMessages.MESSAGE_ERROR_CONFLICT));
       } else {
         next(err);
       }
